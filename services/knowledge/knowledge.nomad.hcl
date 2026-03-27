@@ -293,6 +293,12 @@ variable "vault_kv_path" {
   description = "Vault KV secret engine path"
 }
 
+variable "vault_skip_verify" {
+  type        = bool
+  default     = false
+  description = "Skip TLS verification for Vault"
+}
+
 variable "logging_level" {
   type        = string
   default     = "info"
@@ -374,6 +380,7 @@ job "legion-knowledge" {
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
         VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
+        VAULT_SKIP_VERIFY       = tostring(var.vault_skip_verify)
       }
 
       template {
