@@ -5,6 +5,10 @@
 *.tfvars
 .terraform.lock.hcl
 
+# Nomad
+*.vars.hcl
+!globals.vars.hcl
+
 # Packer
 packer_cache/
 *.pkr.bak
