@@ -67,8 +67,11 @@ jobs:
   # Layer 0: base image (all others depend on this)
   build-base:
     if: >-
-      (github.event_name == 'push' && needs.detect-changes.outputs.base == 'true') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.service == 'base' || inputs.service == 'all'))
+      always() &&
+      (
+        (github.event_name == 'push' && needs.detect-changes.outputs.base == 'true') ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'base' || inputs.service == 'all'))
+      )
     needs: [detect-changes]
     uses: ./.github/workflows/build-single-image.yml
     with:
