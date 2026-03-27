@@ -92,20 +92,24 @@ build {
   }
 
   # push to ghcr
-  post-processor "docker-tag" {
-    repository = "${var.registry_ghcr}/${local.image_name}"
-    tags       = [var.version, "latest"]
-  }
+  post-processors {
+    post-processor "docker-tag" {
+      repository = "${var.registry_ghcr}/${local.image_name}"
+      tags       = [var.version, "latest"]
+    }
 
-  post-processor "docker-push" {
-    login_server = "ghcr.io"
+    post-processor "docker-push" {
+      login_server = "ghcr.io"
+    }
   }
 
   # push to docker hub
-  post-processor "docker-tag" {
-    repository = "${var.registry_docker}/${local.image_name}"
-    tags       = [var.version, "latest"]
-  }
+  post-processors {
+    post-processor "docker-tag" {
+      repository = "${var.registry_docker}/${local.image_name}"
+      tags       = [var.version, "latest"]
+    }
 
-  post-processor "docker-push" {}
+    post-processor "docker-push" {}
+  }
 }
