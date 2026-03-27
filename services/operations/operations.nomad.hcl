@@ -325,7 +325,6 @@ job "legion-operations" {
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
         VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
         VAULT_SKIP_VERIFY       = var.vault_skip_verify
-        VAULT_NAMESPACE         = var.vault_namespace
       }
 
       template {
