@@ -11,7 +11,7 @@ fi
 
 # drop to legion user if running as root
 if [ "$(id -u)" = "0" ]; then
-  exec su-exec legion "$@"
+  exec gosu legion "$@"
 fi
 
 exec "$@"

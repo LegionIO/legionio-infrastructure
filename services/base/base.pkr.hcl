@@ -75,10 +75,10 @@ build {
     ]
   }
 
-  # install su-exec for entrypoint privilege drop
+  # install gosu for entrypoint privilege drop
   provisioner "shell" {
     inline = [
-      "apt-get update -qq && apt-get install -y --no-install-recommends su-exec && rm -rf /var/lib/apt/lists/*",
+      "apt-get update -qq && apt-get install -y --no-install-recommends gosu && rm -rf /var/lib/apt/lists/*",
     ]
   }
 
