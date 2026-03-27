@@ -63,9 +63,9 @@ build {
     inline = [
       "groupadd -r legion",
       "useradd -r -g legion -d /opt/legion -s /bin/bash legion",
-      "mkdir -p /opt/legion/bin /opt/legion/gems /opt/legion/config /opt/legion/data /opt/legion/logs",
+      "mkdir -p /opt/legion/bin /opt/legion/gems /opt/legion/config /opt/legion/data /opt/legion/logs /etc/legionio",
       "mkdir -p /home/legion/.legionio",
-      "chown -R legion:legion /opt/legion /home/legion",
+      "chown -R legion:legion /opt/legion /home/legion /etc/legionio",
     ]
   }
 

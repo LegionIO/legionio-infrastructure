@@ -62,12 +62,12 @@ build {
 
   provisioner "file" {
     source      = "${path.root}/settings.json"
-    destination = "/opt/legion/config/settings.json"
+    destination = "/etc/legionio/settings/settings.json"
   }
 
   provisioner "shell" {
     inline = [
-      "chown legion:legion /opt/legion/config/settings.json",
+      "chown legion:legion /etc/legionio/settings/settings.json",
     ]
   }
 
