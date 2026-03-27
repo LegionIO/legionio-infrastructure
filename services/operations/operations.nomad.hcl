@@ -293,6 +293,7 @@ job "legion-operations" {
         ports      = ["health"]
         command    = "legionio"
         args       = ["start"]
+        volumes    = ["local:/etc/legionio/settings"]
       }
 
       env {
@@ -302,8 +303,8 @@ job "legion-operations" {
       }
 
       template {
-        data = jsonencode(local.settings)
-        destination = "/etc/legionio/settings/settings.json"
+        data        = jsonencode(local.settings)
+        destination = "local/settings.json"
         change_mode = "restart"
       }
 

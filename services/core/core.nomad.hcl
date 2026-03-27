@@ -282,6 +282,7 @@ job "legion-core" {
         image   = local.image
         command = "legionio"
         args    = ["start"]
+        volumes    = ["local:/etc/legionio/settings"]
         ports   = ["health"]
       }
 
@@ -293,7 +294,7 @@ job "legion-core" {
 
       template {
         data        = jsonencode(local.settings)
-        destination = "/etc/legionio/settings/settings.json"
+        destination = "local/settings.json"
         change_mode = "restart"
       }
 
