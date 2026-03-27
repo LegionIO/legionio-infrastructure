@@ -75,14 +75,20 @@ build {
     ]
   }
 
-  # install legionio framework + core libraries + su-exec
+  # install su-exec for entrypoint privilege drop
+  provisioner "shell" {
+    inline = [
+      "apt-get update -qq && apt-get install -y --no-install-recommends su-exec && rm -rf /var/lib/apt/lists/*",
+    ]
+  }
+
+  # install legionio framework + core libraries
   provisioner "shell" {
     environment_vars = [
       "GEM_HOME=/opt/legion/gems",
-      "PATH=/opt/legion/gems/bin:$PATH",
+      "PATH=/opt/legion/gems/bin:/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin",
     ]
     inline = [
-      "apt-get update -qq && apt-get install -y --no-install-recommends su-exec && rm -rf /var/lib/apt/lists/*",
       "gem install --no-document legionio",
       "gem install --no-document legion-json legion-logging legion-transport legion-cache legion-data legion-crypt",
       "gem install --no-document lex-node",

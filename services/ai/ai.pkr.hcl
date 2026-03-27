@@ -70,7 +70,7 @@ build {
   provisioner "shell" {
     environment_vars = [
       "GEM_HOME=/opt/legion/gems",
-      "PATH=/opt/legion/gems/bin:$PATH",
+      "PATH=/opt/legion/gems/bin:/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin",
     ]
     inline = [
       "gem install --no-document ${join(" ", local.ai_extensions)}",
