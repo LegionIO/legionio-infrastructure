@@ -30,6 +30,11 @@ locals {
       cluster_secret = "vault://${var.vault_kv_path}/data/legionio/crypt#cluster_secret"
       vault = {
         enabled             = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
         kv_path             = var.vault_kv_path
         renewer             = true
         renewer_time        = 5
@@ -62,6 +67,11 @@ locals {
       username = var.redis_username
       password = var.redis_password
       enabled  = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
     }
 
     data = {
@@ -87,20 +97,30 @@ locals {
       json  = true
     }
 
-    vault = {
-      address   = var.vault_addr
-      namespace = var.vault_namespace
-      token     = var.vault_token
-    }
 
     llm = {
       enabled          = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
       pipeline_enabled = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
       default_provider = "bedrock"
       default_model    = "us.anthropic.claude-sonnet-4-6"
       providers = {
         bedrock = {
           enabled       = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
           region        = "us-east-2"
           bearer_token  = "vault://${var.vault_kv_path}/data/legionio/llm#bedrock_bearer_token"
           default_model = "us.anthropic.claude-opus-4-6-v1"
@@ -109,6 +129,11 @@ locals {
         }
         openai = {
           enabled       = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
           api_key       = "vault://${var.vault_kv_path}/data/legionio/llm#openai_api_key"
           default_model = "gpt-5.4"
           small_model   = "gpt-5.4-pro"
@@ -221,6 +246,24 @@ variable "postgres_database" {
   description = "PostgreSQL database name"
 }
 
+variable "vault_protocol" {
+  type        = string
+  default     = "https"
+  description = "Vault server protocol"
+}
+
+variable "vault_host" {
+  type        = string
+  default     = "vault.service.consul"
+  description = "Vault server hostname"
+}
+
+variable "vault_port" {
+  type        = number
+  default     = 8200
+  description = "Vault server port"
+}
+
 variable "vault_addr" {
   type        = string
   default     = "https://vault.service.consul:8200"
@@ -325,9 +368,7 @@ job "legion-ai" {
         LEGION_PROCESS_ROLE  = "worker"
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
-        VAULT_ADDR           = var.vault_addr
-        VAULT_NAMESPACE      = var.vault_namespace
-        VAULT_TOKEN          = var.vault_token
+        VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
       }
 
       template {

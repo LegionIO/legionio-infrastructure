@@ -30,15 +30,20 @@ locals {
       cluster_secret = "vault://${var.vault_kv_path}/data/legionio/crypt#cluster_secret"
       vault = {
         enabled             = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
         kv_path             = var.vault_kv_path
         renewer             = true
         renewer_time        = 5
         push_cluster_secret = false
         read_cluster_secret = false
         leases = {
-          rabbitmq = { path = "rabbitmq/creds/agent" }
+          rabbitmq   = { path = "rabbitmq/creds/agent" }
           postgresql = { path = "postgresql/creds/agent" }
-          redis = { path = "redis/creds/agent" }
+          redis      = { path = "redis/creds/agent" }
         }
       }
     }
@@ -85,12 +90,6 @@ locals {
     logging = {
       level = var.logging_level
       json  = true
-    }
-
-    vault = {
-      address   = var.vault_addr
-      namespace = var.vault_namespace
-      token     = var.vault_token
     }
 
     extensions = { parallel_pool_size = 4 }
@@ -195,10 +194,28 @@ variable "postgres_database" {
   description = "PostgreSQL database name"
 }
 
+variable "vault_protocol" {
+  type        = string
+  default     = "https"
+  description = "Vault server protocol"
+}
+
+variable "vault_host" {
+  type        = string
+  default     = "vault.service.consul"
+  description = "Vault server hostname"
+}
+
+variable "vault_port" {
+  type        = number
+  default     = 8200
+  description = "Vault server port"
+}
+
 variable "vault_addr" {
   type        = string
   default     = "https://vault.service.consul:8200"
-  description = "Vault server address"
+  description = "Vault server address (full URL)"
 }
 
 variable "vault_namespace" {
@@ -300,9 +317,7 @@ job "legion-operations" {
         LEGION_PROCESS_ROLE  = "worker"
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
-        VAULT_ADDR           = var.vault_addr
-        VAULT_NAMESPACE      = var.vault_namespace
-        VAULT_TOKEN          = var.vault_token
+        VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
       }
 
       template {

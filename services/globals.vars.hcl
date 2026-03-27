@@ -23,6 +23,9 @@ postgres_password = "legionio"
 postgres_database = "legionio"
 
 # Vault
+vault_protocol  = "https"
+vault_host      = "vault.service.consul"
+vault_port      = 8200
 vault_addr      = "https://vault.service.consul:8200"
 vault_namespace = "legionio"
 vault_token     = ""

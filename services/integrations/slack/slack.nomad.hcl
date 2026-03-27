@@ -29,6 +29,11 @@ locals {
       cluster_secret = "vault://${var.vault_kv_path}/data/legionio/crypt#cluster_secret"
       vault = {
         enabled             = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
         kv_path             = var.vault_kv_path
         renewer             = true
         renewer_time        = 5
@@ -61,6 +66,11 @@ locals {
       username = var.redis_username
       password = var.redis_password
       enabled  = true
+        protocol            = var.vault_protocol
+        address             = var.vault_host
+        port                = var.vault_port
+        token               = var.vault_token
+        vault_namespace     = var.vault_namespace
     }
 
     data = {
@@ -86,11 +96,6 @@ locals {
       json  = true
     }
 
-    vault = {
-      address   = var.vault_addr
-      namespace = var.vault_namespace
-      token     = var.vault_token
-    }
 
     slack = { polling_enabled = true }
 
@@ -194,6 +199,24 @@ variable "postgres_database" {
   type        = string
   default     = "legionio"
   description = "PostgreSQL database name"
+}
+
+variable "vault_protocol" {
+  type        = string
+  default     = "https"
+  description = "Vault server protocol"
+}
+
+variable "vault_host" {
+  type        = string
+  default     = "vault.service.consul"
+  description = "Vault server hostname"
+}
+
+variable "vault_port" {
+  type        = number
+  default     = 8200
+  description = "Vault server port"
 }
 
 variable "vault_addr" {
@@ -300,9 +323,7 @@ job "legion-slack" {
         LEGION_PROCESS_ROLE  = "worker"
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
-        VAULT_ADDR           = var.vault_addr
-        VAULT_NAMESPACE      = var.vault_namespace
-        VAULT_TOKEN          = var.vault_token
+        VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
       }
 
       template {
