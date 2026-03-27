@@ -265,8 +265,8 @@ variable "vault_kv_path" {
 }
 
 variable "vault_skip_verify" {
-  type        = bool
-  default     = false
+  type        = string
+  default     = "false"
   description = "Skip TLS verification for Vault"
 }
 
@@ -351,7 +351,7 @@ job "legion-teams" {
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
         VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
-        VAULT_SKIP_VERIFY       = tostring(var.vault_skip_verify)
+        VAULT_SKIP_VERIFY       = var.vault_skip_verify
       }
 
       template {

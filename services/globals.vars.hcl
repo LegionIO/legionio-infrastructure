@@ -30,7 +30,7 @@ vault_addr      = "https://vault.service.consul:8200"
 vault_namespace = "legionio"
 vault_token     = ""
 vault_kv_path      = "kv"
-vault_skip_verify  = false
+vault_skip_verify  = "false"
 
 # Logging
 logging_level = "info"
