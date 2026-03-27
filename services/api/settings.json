@@ -1,0 +1,41 @@
+{
+  "process": {
+    "role": "api"
+  },
+  "role": {
+    "profile": "custom",
+    "extensions": [
+      "codegen", "conditioner", "exec", "health", "lex", "llm-gateway",
+      "log", "metering", "node", "ping", "scheduler", "tasker",
+      "task_pruner", "telemetry", "transformer",
+      "webhook", "http"
+    ]
+  },
+  "transport": {
+    "url": "amqp://rabbitmq:5672",
+    "vhost": "legionio"
+  },
+  "cache": {
+    "driver": "redis",
+    "url": "redis://redis:6379/0"
+  },
+  "data": {
+    "adapter": "postgres",
+    "host": "postgresql",
+    "port": 5432,
+    "database": "legionio",
+    "pool_size": 15
+  },
+  "logging": {
+    "level": "info",
+    "json": true
+  },
+  "api": {
+    "enabled": true,
+    "bind": "0.0.0.0",
+    "port": 4567
+  },
+  "mcp": {
+    "enabled": true
+  }
+}

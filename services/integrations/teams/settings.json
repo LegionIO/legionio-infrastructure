@@ -1,0 +1,42 @@
+{
+  "process": {
+    "role": "worker"
+  },
+  "role": {
+    "profile": "custom",
+    "extensions": [
+      "codegen", "conditioner", "exec", "health", "lex", "llm-gateway",
+      "log", "metering", "node", "ping", "scheduler", "tasker",
+      "task_pruner", "telemetry", "transformer",
+      "microsoft_teams", "kerberos"
+    ]
+  },
+  "transport": {
+    "url": "amqp://rabbitmq:5672",
+    "vhost": "legionio"
+  },
+  "cache": {
+    "driver": "redis",
+    "url": "redis://redis:6379/0"
+  },
+  "data": {
+    "adapter": "postgres",
+    "host": "postgresql",
+    "port": 5432,
+    "database": "legionio",
+    "pool_size": 10
+  },
+  "logging": {
+    "level": "info",
+    "json": true
+  },
+  "api": {
+    "enabled": false
+  },
+  "vault": {
+    "kerberos": {
+      "service_principal": null,
+      "auth_path": "auth/kerberos/login"
+    }
+  }
+}

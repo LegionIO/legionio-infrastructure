@@ -1,0 +1,199 @@
+name: Build and Push Container Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/**'
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to build (all, base, core, ai, cognitive, knowledge, operations, api, integrations/teams, integrations/slack)'
+        required: true
+        type: choice
+        options:
+          - all
+          - base
+          - core
+          - ai
+          - cognitive
+          - knowledge
+          - operations
+          - api
+          - integrations/teams
+          - integrations/slack
+      version:
+        description: 'Version tag (default: git sha short)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  detect-changes:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      base: ${{ steps.changes.outputs.base }}
+      core: ${{ steps.changes.outputs.core }}
+      ai: ${{ steps.changes.outputs.ai }}
+      cognitive: ${{ steps.changes.outputs.cognitive }}
+      knowledge: ${{ steps.changes.outputs.knowledge }}
+      operations: ${{ steps.changes.outputs.operations }}
+      api: ${{ steps.changes.outputs.api }}
+      teams: ${{ steps.changes.outputs.teams }}
+      slack: ${{ steps.changes.outputs.slack }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: changes
+        run: |
+          changed=$(git diff --name-only HEAD~1 HEAD -- services/)
+          has() { echo "$changed" | grep -q "services/$1/" && echo true || echo false; }
+          echo "base=$(has base)" >> "$GITHUB_OUTPUT"
+          echo "core=$(has core)" >> "$GITHUB_OUTPUT"
+          echo "ai=$(has ai)" >> "$GITHUB_OUTPUT"
+          echo "cognitive=$(has cognitive)" >> "$GITHUB_OUTPUT"
+          echo "knowledge=$(has knowledge)" >> "$GITHUB_OUTPUT"
+          echo "operations=$(has operations)" >> "$GITHUB_OUTPUT"
+          echo "api=$(has api)" >> "$GITHUB_OUTPUT"
+          echo "teams=$(has integrations/teams)" >> "$GITHUB_OUTPUT"
+          echo "slack=$(has integrations/slack)" >> "$GITHUB_OUTPUT"
+
+  # Layer 0: base image (all others depend on this)
+  build-base:
+    if: >-
+      (github.event_name == 'push' && needs.detect-changes.outputs.base == 'true') ||
+      (github.event_name == 'workflow_dispatch' && (inputs.service == 'base' || inputs.service == 'all'))
+    needs: [detect-changes]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: base
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  # Layer 1: core image (depends on base)
+  build-core:
+    if: >-
+      always() &&
+      (needs.build-base.result == 'success' || needs.build-base.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'core' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-base]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: core
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  # Layer 2: all role images (depend on core, run in parallel)
+  build-ai:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.ai == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'ai' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: ai
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-cognitive:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.cognitive == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'cognitive' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: cognitive
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-knowledge:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.knowledge == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'knowledge' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: knowledge
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-operations:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.operations == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'operations' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: operations
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-api:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.api == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'api' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: api
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-teams:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.teams == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'integrations/teams' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: integrations/teams
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
+
+  build-slack:
+    if: >-
+      always() &&
+      (needs.build-core.result == 'success' || needs.build-core.result == 'skipped') &&
+      (
+        (github.event_name == 'push' && (needs.detect-changes.outputs.base == 'true' || needs.detect-changes.outputs.core == 'true' || needs.detect-changes.outputs.slack == 'true')) ||
+        (github.event_name == 'workflow_dispatch' && (inputs.service == 'integrations/slack' || inputs.service == 'all'))
+      )
+    needs: [detect-changes, build-core]
+    uses: ./.github/workflows/build-single-image.yml
+    with:
+      service: integrations/slack
+      version: ${{ inputs.version || github.sha }}
+    secrets: inherit
