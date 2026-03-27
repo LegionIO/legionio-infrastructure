@@ -300,12 +300,16 @@ job "legion-operations" {
         LEGION_PROCESS_ROLE  = "worker"
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
+        VAULT_ADDR           = var.vault_addr
+        VAULT_NAMESPACE      = var.vault_namespace
+        VAULT_TOKEN          = var.vault_token
       }
 
       template {
         data        = jsonencode(local.settings)
         destination = "local/settings.json"
         change_mode = "restart"
+        perms       = "0644"
       }
 
       vault {

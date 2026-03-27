@@ -290,6 +290,9 @@ job "legion-core" {
         LEGION_PROCESS_ROLE  = "worker"
         LEGION_ROLE_PROFILE  = "core"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
+        VAULT_ADDR           = var.vault_addr
+        VAULT_NAMESPACE      = var.vault_namespace
+        VAULT_TOKEN          = var.vault_token
       }
 
       template {
