@@ -311,8 +311,7 @@ job "legion-api" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "api" {
@@ -340,9 +339,6 @@ job "legion-api" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-api"]
-      }
 
       resources {
         cpu    = 500

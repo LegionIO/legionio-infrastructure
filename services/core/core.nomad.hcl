@@ -301,8 +301,7 @@ job "legion-core" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "core" {
@@ -330,9 +329,6 @@ job "legion-core" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-core"]
-      }
 
       resources {
         cpu    = 500

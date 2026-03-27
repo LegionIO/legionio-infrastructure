@@ -332,8 +332,7 @@ job "legion-teams" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "teams" {
@@ -361,9 +360,6 @@ job "legion-teams" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-teams"]
-      }
 
       resources {
         cpu    = 500

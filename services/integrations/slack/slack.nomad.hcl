@@ -311,8 +311,7 @@ job "legion-slack" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "slack" {
@@ -340,9 +339,6 @@ job "legion-slack" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-slack"]
-      }
 
       resources {
         cpu    = 250

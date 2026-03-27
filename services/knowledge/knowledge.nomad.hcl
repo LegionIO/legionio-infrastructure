@@ -361,8 +361,7 @@ job "legion-knowledge" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "knowledge" {
@@ -390,9 +389,6 @@ job "legion-knowledge" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-knowledge"]
-      }
 
       resources {
         cpu    = 1000

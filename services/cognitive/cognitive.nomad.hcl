@@ -335,8 +335,7 @@ job "legion-cognitive" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "cognitive" {
@@ -364,9 +363,6 @@ job "legion-cognitive" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-cognitive"]
-      }
 
       resources {
         cpu    = 1000

@@ -304,8 +304,7 @@ job "legion-operations" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "operations" {
@@ -315,8 +314,8 @@ job "legion-operations" {
         image      = local.image
         force_pull = true
         ports      = ["health"]
-        command    = "legionio"
-        args       = ["start"]
+        command    = "/bin/sh"
+        args       = ["-c", "sleep infinity"]
         volumes    = ["local:/etc/legionio/settings"]
       }
 
@@ -333,10 +332,6 @@ job "legion-operations" {
         destination = "local/settings.json"
         change_mode = "restart"
         perms       = "0644"
-      }
-
-      vault {
-        policies = ["legionio-operations"]
       }
 
       resources {

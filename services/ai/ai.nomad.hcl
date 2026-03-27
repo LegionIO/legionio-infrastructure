@@ -356,8 +356,7 @@ job "legion-ai" {
       attempts = 0
       interval = "5m"
       delay    = "15s"
-      mode     = "delay"
-      unlimited = true
+      mode     = "fail"
     }
 
     task "ai" {
@@ -385,9 +384,6 @@ job "legion-ai" {
         change_mode = "restart"
       }
 
-      vault {
-        policies = ["legionio-ai"]
-      }
 
       resources {
         cpu    = 1000
