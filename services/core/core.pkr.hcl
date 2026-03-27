@@ -75,7 +75,6 @@ build {
     ]
     inline = [
       "gem install --no-document ${join(" ", local.core_extensions)}",
-      "bootsnap precompile --gemfile /opt/legion/gems",
       "chown -R legion:legion /opt/legion/gems",
     ]
   }

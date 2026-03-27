@@ -94,7 +94,6 @@ build {
       "gem install --no-document lex-node",
       "gem install --no-document pg sqlite3",
       "gem install --no-document bootsnap",
-      "bootsnap precompile --gemfile /opt/legion/gems",
       "chown -R legion:legion /opt/legion/gems",
     ]
   }

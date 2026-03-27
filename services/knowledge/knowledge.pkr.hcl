@@ -72,7 +72,6 @@ build {
       "PATH=/opt/legion/gems/bin:/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin",
     ]
     inline = [
-      "bootsnap precompile --gemfile /opt/legion/gems",
       "chown -R legion:legion /opt/legion/gems",
     ]
   }
