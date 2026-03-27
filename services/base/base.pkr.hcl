@@ -59,7 +59,7 @@ build {
       "apt-get install -y --no-install-recommends \\",
       "  build-essential git curl ca-certificates \\",
       "  libpq-dev libsqlite3-dev libffi-dev \\",
-      "  libssl-dev libyaml-dev",
+      "  libssl-dev libyaml-dev libsnappy-dev",
       "rm -rf /var/lib/apt/lists/*",
     ]
   }
@@ -92,7 +92,7 @@ build {
       "gem install --no-document legionio",
       "gem install --no-document legion-json legion-logging legion-transport legion-cache legion-data legion-crypt",
       "gem install --no-document lex-node",
-      "gem install --no-document pg sqlite3",
+      "gem install --no-document pg sqlite3 snappy",
       "gem install --no-document bootsnap",
       "chown -R legion:legion /opt/legion/gems",
     ]
