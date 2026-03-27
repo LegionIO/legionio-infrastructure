@@ -19,16 +19,10 @@ variable "version" {
   description = "Image tag version"
 }
 
-variable "registry_ghcr" {
+variable "registry" {
   type        = string
   default     = "ghcr.io/legionio"
-  description = "GHCR registry prefix"
-}
-
-variable "registry_docker" {
-  type        = string
-  default     = "docker.io/legionio"
-  description = "Docker Hub registry prefix"
+  description = "Container registry prefix"
 }
 
 locals {
@@ -87,7 +81,7 @@ build {
 
   # tag for docker hub (workflow handles push to both registries)
   post-processor "docker-tag" {
-    repository = "${var.registry_docker}/${local.image_name}"
+    repository = "${var.registry}/${local.image_name}"
     tags       = [var.version, "latest"]
   }
 }
