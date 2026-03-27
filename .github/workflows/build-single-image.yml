@@ -66,21 +66,21 @@ jobs:
           name="legion-${SERVICE##*/}"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
 
-      - name: Tag and push to GHCR
+      - name: Push to GHCR
         env:
           NAME: ${{ steps.meta.outputs.name }}
           VERSION: ${{ inputs.version }}
         run: |
-          docker tag "docker.io/legionio/${NAME}:${VERSION}" "ghcr.io/legionio/${NAME}:${VERSION}"
-          docker tag "docker.io/legionio/${NAME}:${VERSION}" "ghcr.io/legionio/${NAME}:latest"
           docker push "ghcr.io/legionio/${NAME}:${VERSION}"
           docker push "ghcr.io/legionio/${NAME}:latest"
 
-      - name: Push to Docker Hub
+      - name: Tag and push to Docker Hub
         continue-on-error: true
         env:
           NAME: ${{ steps.meta.outputs.name }}
           VERSION: ${{ inputs.version }}
         run: |
+          docker tag "ghcr.io/legionio/${NAME}:${VERSION}" "docker.io/legionio/${NAME}:${VERSION}"
+          docker tag "ghcr.io/legionio/${NAME}:latest" "docker.io/legionio/${NAME}:latest"
           docker push "docker.io/legionio/${NAME}:${VERSION}"
           docker push "docker.io/legionio/${NAME}:latest"
