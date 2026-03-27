@@ -52,8 +52,34 @@ jobs:
             docker pull ghcr.io/legionio/legion-core:latest
           fi
 
-      - name: Build and push image
+      - name: Build image with Packer
         working-directory: services/${{ inputs.service }}
         env:
           VERSION: ${{ inputs.version }}
         run: packer build -var "version=${VERSION}" .
+
+      - name: Derive image name
+        id: meta
+        env:
+          SERVICE: ${{ inputs.service }}
+        run: |
+          name="legion-${SERVICE##*/}"
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and push to GHCR
+        env:
+          NAME: ${{ steps.meta.outputs.name }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          docker tag "docker.io/legionio/${NAME}:${VERSION}" "ghcr.io/legionio/${NAME}:${VERSION}"
+          docker tag "docker.io/legionio/${NAME}:${VERSION}" "ghcr.io/legionio/${NAME}:latest"
+          docker push "ghcr.io/legionio/${NAME}:${VERSION}"
+          docker push "ghcr.io/legionio/${NAME}:latest"
+
+      - name: Push to Docker Hub
+        env:
+          NAME: ${{ steps.meta.outputs.name }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          docker push "docker.io/legionio/${NAME}:${VERSION}"
+          docker push "docker.io/legionio/${NAME}:latest"

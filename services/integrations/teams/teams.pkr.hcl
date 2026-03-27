@@ -85,25 +85,9 @@ build {
     ]
   }
 
-  # push to ghcr
-  post-processors {
-    post-processor "docker-tag" {
-      repository = "${var.registry_ghcr}/${local.image_name}"
-      tags       = [var.version, "latest"]
-    }
-
-    post-processor "docker-push" {
-      login_server = "ghcr.io"
-    }
-  }
-
-  # push to docker hub
-  post-processors {
-    post-processor "docker-tag" {
-      repository = "${var.registry_docker}/${local.image_name}"
-      tags       = [var.version, "latest"]
-    }
-
-    post-processor "docker-push" {}
+  # tag for docker hub (workflow handles push to both registries)
+  post-processor "docker-tag" {
+    repository = "${var.registry_docker}/${local.image_name}"
+    tags       = [var.version, "latest"]
   }
 }
