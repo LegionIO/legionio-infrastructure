@@ -308,10 +308,11 @@ job "legion-api" {
     }
 
     restart {
-      attempts = 3
+      attempts = 0
       interval = "5m"
       delay    = "15s"
       mode     = "delay"
+      unlimited = true
     }
 
     task "api" {
