@@ -1,5 +1,5 @@
 # Global connection variables for all LegionIO Nomad jobs.
-# Usage: nomad job run -var-file=../../globals.vars.hcl <service>.nomad.hcl
+# Usage: nomad job run -var-file=globals.vars.hcl <service>/<service>.nomad.hcl
 
 # RabbitMQ
 rabbitmq_host     = "rabbitmq.service.consul"
@@ -21,16 +21,6 @@ postgres_port     = 5432
 postgres_username = "legionio"
 postgres_password = "legionio"
 postgres_database = "legionio"
-
-# Vault
-vault_protocol  = "https"
-vault_host      = "vault.service.consul"
-vault_port      = 8200
-vault_addr      = "https://vault.service.consul:8200"
-vault_namespace = "legionio"
-vault_token     = ""
-vault_kv_path      = "kv"
-vault_skip_verify  = "false"
 
 # Logging
 logging_level = "info"

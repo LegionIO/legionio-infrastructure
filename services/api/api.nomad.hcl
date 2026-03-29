@@ -26,25 +26,7 @@ locals {
     }
 
     crypt = {
-      cluster_secret = "vault://${var.vault_kv_path}/data/legionio/crypt#cluster_secret"
-      vault = {
-        enabled             = true
-        protocol            = var.vault_protocol
-        address             = var.vault_host
-        port                = var.vault_port
-        token               = var.vault_token
-        vault_namespace     = var.vault_namespace
-        kv_path             = var.vault_kv_path
-        renewer             = true
-        renewer_time        = 5
-        push_cluster_secret = false
-        read_cluster_secret = false
-        leases = {
-          rabbitmq   = { path = "rabbitmq/creds/agent" }
-          postgresql = { path = "postgresql/creds/agent" }
-          redis      = { path = "redis/creds/agent" }
-        }
-      }
+      vault = { enabled = false }
     }
 
     transport = {
@@ -66,11 +48,6 @@ locals {
       username = var.redis_username
       password = var.redis_password
       enabled  = true
-        protocol            = var.vault_protocol
-        address             = var.vault_host
-        port                = var.vault_port
-        token               = var.vault_token
-        vault_namespace     = var.vault_namespace
     }
 
     data = {
@@ -200,54 +177,6 @@ variable "postgres_database" {
   description = "PostgreSQL database name"
 }
 
-variable "vault_protocol" {
-  type        = string
-  default     = "https"
-  description = "Vault server protocol"
-}
-
-variable "vault_host" {
-  type        = string
-  default     = "vault.service.consul"
-  description = "Vault server hostname"
-}
-
-variable "vault_port" {
-  type        = number
-  default     = 8200
-  description = "Vault server port"
-}
-
-variable "vault_addr" {
-  type        = string
-  default     = "https://vault.service.consul:8200"
-  description = "Vault server address"
-}
-
-variable "vault_namespace" {
-  type        = string
-  default     = "legionio"
-  description = "Vault namespace"
-}
-
-variable "vault_token" {
-  type        = string
-  default     = ""
-  description = "Vault token for authentication"
-}
-
-variable "vault_kv_path" {
-  type        = string
-  default     = "kv"
-  description = "Vault KV secret engine path"
-}
-
-variable "vault_skip_verify" {
-  type        = string
-  default     = "false"
-  description = "Skip TLS verification for Vault"
-}
-
 variable "logging_level" {
   type        = string
   default     = "info"
@@ -275,9 +204,8 @@ job "legion-api" {
     count = var.count
 
     reschedule {
-      delay          = "30s"
-      delay_function = "exponential"
-      max_delay      = "5m"
+      delay          = "5s"
+      max_delay      = "10s"
       unlimited      = true
     }
 
@@ -289,6 +217,7 @@ job "legion-api" {
     }
 
     network {
+      mode = "bridge"
       port "http" {
         to = 4567
       }
@@ -301,7 +230,7 @@ job "legion-api" {
 
       check {
         type     = "http"
-        path     = "/health"
+        path     = "/api/health"
         interval = "15s"
         timeout  = "5s"
       }
@@ -329,8 +258,6 @@ job "legion-api" {
         LEGION_PROCESS_ROLE  = "api"
         LEGION_ROLE_PROFILE  = "custom"
         LEGION_SETTINGS_FILE = "/etc/legionio/settings/settings.json"
-        VAULT_DEV_ROOT_TOKEN_ID = var.vault_token
-        VAULT_SKIP_VERIFY       = var.vault_skip_verify
       }
 
       template {
