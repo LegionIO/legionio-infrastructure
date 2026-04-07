@@ -46,7 +46,7 @@ jobs:
       teams: ${{ steps.changes.outputs.teams }}
       slack: ${{ steps.changes.outputs.slack }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
